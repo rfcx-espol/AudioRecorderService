@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+        android:key="is_on_service"
+        android:title="is_on_service"
+        android:summary="string - true/false"
+        android:enabled="true"
+        android:defaultValue="false" />
+
+    <!-- Installer/Updater Prefs -->
+
+    <EditTextPreference
+        android:key="recording_audio_time"
+        android:title="recording_audio_time"
+        android:summary="int - seconds"
+        android:enabled="true"
+        android:defaultValue="360000" />
+
+    <!-- Audio Capture Controls -->
+
+    <EditTextPreference
+        android:key="audio_duration"
+        android:title="audio_duration"
+        android:summary="int - seconds"
+        android:enabled="true"
+        android:defaultValue="90" />
+
+    <!-- Audio Capture Formatting -->
+
+    <!--Solo 3gp o m4a-->
+    <EditTextPreference
+        android:key="audio_format"
+        android:title="audio_format"
+        android:summary="string - codec"
+        android:enabled="true"
+        android:defaultValue="m4a" />
+
+    <EditTextPreference
+        android:key="audio_encode_bitrate"
+        android:title="audio_encode_bitrate"
+        android:summary="int - bits per sec"
+        android:enabled="true"
+        android:defaultValue="448000" />
+
+    <EditTextPreference
+        android:key="audio_sample_rate"
+        android:title="audio_sample_rate"
+        android:summary="int - hertz"
+        android:enabled="true"
+        android:defaultValue="44100" />
+
+</PreferenceScreen>

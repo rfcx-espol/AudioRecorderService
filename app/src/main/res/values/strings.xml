@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">AudioRecorder</string>
+    <string name="menu_prefs">Prefs</string>
+    <string name="menu_reboot">Reboot</string>
+    <string name="menu_screenshot">Screenshot</string>
+    <string name="menu_test_i2c">Atest_i2cudio</string>
+</resources>
