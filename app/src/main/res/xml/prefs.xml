@@ -7,16 +7,12 @@
         android:enabled="true"
         android:defaultValue="false" />
 
-    <!-- Installer/Updater Prefs -->
-
     <EditTextPreference
-        android:key="recording_audio_time"
-        android:title="recording_audio_time"
+        android:key="recording_audio_interval"
+        android:title="recording_audio_interval"
         android:summary="int - seconds"
         android:enabled="true"
-        android:defaultValue="360000" />
-
-    <!-- Audio Capture Controls -->
+        android:defaultValue="60" />
 
     <EditTextPreference
         android:key="audio_duration"
@@ -25,28 +21,18 @@
         android:enabled="true"
         android:defaultValue="90" />
 
-    <!-- Audio Capture Formatting -->
-
-    <!--Solo 3gp o m4a-->
-    <EditTextPreference
-        android:key="audio_format"
-        android:title="audio_format"
-        android:summary="string - codec"
-        android:enabled="true"
-        android:defaultValue="m4a" />
-
     <EditTextPreference
         android:key="audio_encode_bitrate"
-        android:title="audio_encode_bitrate"
-        android:summary="int - bits per sec"
+        android:title="bit rate"
+        android:summary="int - 24 kbps (mono) - 128 kbps or 192 kbps (stereo)"
         android:enabled="true"
-        android:defaultValue="448000" />
+        android:defaultValue="448" />
 
     <EditTextPreference
         android:key="audio_sample_rate"
-        android:title="audio_sample_rate"
-        android:summary="int - hertz"
+        android:title="sample rate"
+        android:summary="int - from 8 to 48 khz"
         android:enabled="true"
-        android:defaultValue="44100" />
+        android:defaultValue="44" />
 
 </PreferenceScreen>

@@ -9,13 +9,13 @@ import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import app.recorder.audiorecorder.utils.FileUtils;
-import app.recorder.audiorecorder.utils.Identifiers;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class AudioRecorderService extends Service {
+public class AudioRecorderService extends Service implements MediaRecorder.OnInfoListener {
     MediaRecorder mediaRecorder;
     public static PowerManager.WakeLock wakeLock;
     private final IBinder mBinder = new LocalBinder();
@@ -52,7 +52,7 @@ public class AudioRecorderService extends Service {
         super.onDestroy();
         stopRecording();
         wakeLock.release();
-        Intent intent = new Intent("services.ReciverCall");
+        Intent intent = new Intent("services.ReceiverCall");
         sendBroadcast(intent);
     }
 
@@ -71,44 +71,38 @@ public class AudioRecorderService extends Service {
     public void stopRecording(){
         mediaRecorder.stop();
         Log.d("ATENCION", "GRABACION TERMINADA");
+        mediaRecorder.reset();
         mediaRecorder.release();
+        mediaRecorder = null;
+        Log.d("ATENCION", "ESPERANDO PARA PROXIMA GRABACION..");
     }
 
     public void startRecording() {
-
-        Runnable r = new Runnable() {
-            public void run() {
-                while (true) {
-                    mediaRecorder = new MediaRecorder();
-                    mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-                    mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                    mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-                    mediaRecorder.setAudioChannels(2);
-                    mediaRecorder.setAudioEncodingBitRate(448000);
-                    mediaRecorder.setAudioSamplingRate(44100);
-                    String sourceFile = mediaRecorderSetOutPutFile();
-                    /*String targetFile = sourceFile + ".gz";*/
-                    try {
-                        mediaRecorder.prepare();
-                        mediaRecorder.start();
-                        Log.d("ATENCION", "GRABANDO..");
-                        Thread.sleep(90000);
-                        stopRecording();
-                        /*FileUtils.zip(sourceFile, targetFile);
-                        FileUtils.eraseSourceFile(sourceFile);*/
-                        Log.d("ATENCION", "ESPERANDO PARA PROXIMA GRABACION..");
-                        Thread.sleep(60000);
-                    } catch (IllegalStateException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        };
-        Thread t = new Thread(r);
-        t.start();
+        mediaRecorder = new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        mediaRecorder.setAudioChannels(2);
+        mediaRecorder.setAudioEncodingBitRate(448000);
+        mediaRecorder.setAudioSamplingRate(44100);
+        mediaRecorder.setMaxDuration(90000);
+        mediaRecorder.setOnInfoListener(this);
+        String sourceFile = mediaRecorderSetOutPutFile();
+        try {
+            mediaRecorder.prepare();
+            mediaRecorder.start();
+            Log.d("ATENCION", "GRABANDO");
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
+    public void onInfo(MediaRecorder mediaRecorder, int what, int extra) {
+        if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
+            stopRecording();
+        }
+    }
+
 }

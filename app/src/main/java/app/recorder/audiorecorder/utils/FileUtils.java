@@ -4,12 +4,8 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.io.IOException;
-import java.util.zip.GZIPOutputStream;
 
 public class FileUtils {
 
@@ -86,28 +82,5 @@ public class FileUtils {
             return false;
         }
     }
-
-    /*public static void zip(String sourceFile, String targetFile){
-        try {
-            FileOutputStream fos = new FileOutputStream(targetFile);
-            GZIPOutputStream gzos = new GZIPOutputStream(fos);
-            byte[] buffer = new byte[1024];
-            int length;
-            FileInputStream fis = new FileInputStream(sourceFile);
-            while ((length = fis.read(buffer)) > 0) {
-                gzos.write(buffer, 0, length);
-            }
-            fis.close();
-            gzos.finish();
-            gzos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void eraseSourceFile(String sourceFile){
-        File file = new File(sourceFile);
-        file.delete();
-    }*/
 
 }
