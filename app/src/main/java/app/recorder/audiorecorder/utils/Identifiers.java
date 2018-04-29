@@ -4,33 +4,37 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
-
 import java.util.Map;
 
-/**
- * Created by Anny on 29/04/2018.
- */
-
 public class Identifiers {
-    public static int recordingAudioTime;
-    //time in seconds of an audio duration
+    //INTERVALO ENTRE EL INICIO DE CADA GRABACIÓN
+    public static int recordingAudioInterval;
+    //DURACIÓN DEL AUDIO
     public static int audioDuration;
-    //These are the preferences
-    public static SharedPreferences prefSettings;
-
+    //NÚMERO DE MUESTRAS
     public static int samplingRate;
+    //TASA DE BITS
+    public static int bitRate;
+    //NÚMERO DE CANALES
+    public static int channels;
+    //FORMATO DEL ARCHIVO DE AUDIO
+    public static String format;
+    //SERVICIO EN EJECUCIÓN
+    public static boolean onService = false;
 
+    //ESTABLECE LAS PREFERENCIAS DEL SERVICIO
     public static void setPreferencesApplications(Context context){
-        prefSettings = PreferenceManager.getDefaultSharedPreferences(context);
-        //Default value: 1 minute y medio
-        audioDuration = Integer.parseInt(prefSettings.getString("audio_duration","90"));
-        //Default value: 2 minutes
-        recordingAudioTime = Integer.parseInt(prefSettings.getString("recording_audio_interval", "120"));
-
-        samplingRate = Integer.parseInt(prefSettings.getString("audio_sample_rate","48"));
+        SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(context);
+        audioDuration = Integer.parseInt(prefSettings.getString("audio_duration","90")) * 1000;
+        recordingAudioInterval = Integer.parseInt(prefSettings.getString("recording_audio_interval", "120")) * 1000;
+        samplingRate = Integer.parseInt(prefSettings.getString("audio_sample_rate","48000"));
+        bitRate = Integer.parseInt(prefSettings.getString("audio_encode_bitrate","448")) * 1000;
+        channels = Integer.parseInt(prefSettings.getString("channels","2"));
+        format = prefSettings.getString("file_format","m4a");
+        onService = true;
 
         for ( Map.Entry<String,?> pref : prefSettings.getAll().entrySet() ) {
-            Log.d("Utils inizialization" , pref.getKey() + ": " +pref.getValue().toString());
+            Log.d("CONFIGURACIÓN ACTUAL" , pref.getKey() + ": " + pref.getValue().toString());
         }
     }
 }

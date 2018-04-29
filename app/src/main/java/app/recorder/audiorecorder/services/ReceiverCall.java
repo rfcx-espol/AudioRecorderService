@@ -5,9 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import app.recorder.audiorecorder.activities.MainActivity;
-
 public class ReceiverCall extends BroadcastReceiver {
+    //REINICIAR EL SERVICIO AL REINICIAR EL DISPOSITIVO
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i("SERVICIO", "REINICIANDO EL SERVICIO");

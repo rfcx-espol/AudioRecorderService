@@ -4,27 +4,29 @@ import android.app.Service;
 import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import app.recorder.audiorecorder.utils.FileUtils;
-
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
-import static app.recorder.audiorecorder.utils.Identifiers.audioDuration;
-import static app.recorder.audiorecorder.utils.Identifiers.recordingAudioTime;
-import static app.recorder.audiorecorder.utils.Identifiers.samplingRate;
+import app.recorder.audiorecorder.R;
+import app.recorder.audiorecorder.utils.FileUtils;
 import static app.recorder.audiorecorder.utils.Identifiers.setPreferencesApplications;
+import static app.recorder.audiorecorder.utils.Identifiers.audioDuration;
+import static app.recorder.audiorecorder.utils.Identifiers.recordingAudioInterval;
+import static app.recorder.audiorecorder.utils.Identifiers.samplingRate;
+import static app.recorder.audiorecorder.utils.Identifiers.bitRate;
+import static app.recorder.audiorecorder.utils.Identifiers.channels;
+import static app.recorder.audiorecorder.utils.Identifiers.format;
+import static app.recorder.audiorecorder.utils.Identifiers.onService;
 
 public class AudioRecorderService extends Service implements MediaRecorder.OnInfoListener {
     MediaRecorder mediaRecorder;
+    MediaRecorder.OnInfoListener listener = this;
     public static PowerManager.WakeLock wakeLock;
     private final IBinder mBinder = new LocalBinder();
-
 
     public AudioRecorderService() {}
 
@@ -40,23 +42,27 @@ public class AudioRecorderService extends Service implements MediaRecorder.OnInf
         return mBinder;
     }
 
+    //CREAR EL SERVICIO DE GRABACIÓN DE AUDIOS
     @Override
     public void onCreate(){
         super.onCreate();
-        //INICIALIZAR LAS CONFIGURACIONES
+        //INICIALIZAR LAS CONFIGURACIONES CON VALORES POR DEFECTO
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
         setPreferencesApplications(getApplicationContext());
 
-        //MANTENER ENCENDIDO EL CPU DEL CELULAR
+        //MANTENER ENCENDIDO EL CPU DEL CELULAR AL APAGAR LA PANTALLA
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakelockTag");
         wakeLock.acquire();
     }
 
+    //CREAR EL SERVICIO DE GRABACIÓN DE AUDIOS
     public int onStartCommand(Intent intent, int flags, int startId) {
         startRecording();
         return Service.START_STICKY;
     }
 
+    //DESTRUIR EL SERVICIO DE GRABACIÓN DE AUDIOS
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -66,47 +72,63 @@ public class AudioRecorderService extends Service implements MediaRecorder.OnInf
         sendBroadcast(intent);
     }
 
-    //ESTABLECE EL OUTPUT DEL AUDIO
-    public String mediaRecorderSetOutPutFile(){
+    //CREAR EL ARCHIVO DE SALIDA DEL AUDIO
+    public void mediaRecorderSetOutPutFile(){
         long captureTimeStamp = System.currentTimeMillis();
-        Date c = Calendar.getInstance().getTime();
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH,mm,ss");
-        String formattedDate = df.format(c);
         String captureDir = FileUtils.createAudiosFilesDir(captureTimeStamp);
-        String inputPath = FileUtils.getCaptureFilePath(captureDir,formattedDate,"m4a");
+        String inputPath = FileUtils.getCaptureFilePath(captureDir,captureTimeStamp,format);
         mediaRecorder.setOutputFile(inputPath);
-        return inputPath;
     }
 
+    //DETENER LA GRABACIÓN Y ACTUALIZAR LAS PREFERENCIAS
     public void stopRecording(){
         mediaRecorder.stop();
-        Log.d("ATTENTION", "RECORDING STOPPED");
+        Log.d("GRABACIÓN", "LA GRABACIÓN TERMINÓ");
+        Log.d("GRABACIÓN", "ESPERANDO " + String.valueOf((recordingAudioInterval - audioDuration) / 1000) +
+                " SEGUNDOS " + "PARA LA PRÓXIMA GRABACIÓN");
         mediaRecorder.reset();
         mediaRecorder.release();
         mediaRecorder = null;
-        Log.d("ATTENTION", "WAITING "+String.valueOf(recordingAudioTime)+" SECONDS " +
-                "FOR NEXT RECORDING..");
-    }
-
-    public void startRecording() {
-        mediaRecorder = new MediaRecorder();
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-        mediaRecorder.setAudioSamplingRate(samplingRate*1000);
-        mediaRecorder.setMaxDuration(audioDuration*1000);
-        mediaRecorder.setOnInfoListener(this);
-        String sourceFile = mediaRecorderSetOutPutFile();
-        try {
-            mediaRecorder.prepare();
-            mediaRecorder.start();
-            Log.d("ATTENTION","RECORDING "+ String.valueOf(audioDuration)+" SECONDS");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         setPreferencesApplications(getApplicationContext());
     }
 
+    //INICIAR LA GRABACIÓN DE AUDIOS
+    public void startRecording() {
+        final Handler h = new Handler();
+        final Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                mediaRecorder = new MediaRecorder();
+                mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                if(format.equals("m4a")) {
+                    mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+                } else {
+                    mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                }
+                mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+                mediaRecorder.setAudioChannels(channels);
+                mediaRecorder.setAudioEncodingBitRate(bitRate);
+                mediaRecorder.setAudioSamplingRate(samplingRate);
+                mediaRecorder.setMaxDuration(audioDuration);
+                mediaRecorder.setOnInfoListener(listener);
+                mediaRecorderSetOutPutFile();
+                try {
+                    mediaRecorder.prepare();
+                    mediaRecorder.start();
+                    Log.d("GRABACIÓN","GRABANDO DURANTE "+ String.valueOf(audioDuration / 1000) + " SEGUNDOS");
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                h.postDelayed(this, recordingAudioInterval);
+            }
+        };
+        Thread t = new Thread(r);
+        t.start();
+    }
+
+    //DETECTAR CUANDO SE LLEGA A LA DURACIÓN MÁXIMA DEL AUDIO
     public void onInfo(MediaRecorder mediaRecorder, int what, int extra) {
         if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
             stopRecording();
