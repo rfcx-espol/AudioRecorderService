@@ -15,10 +15,16 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import static app.recorder.audiorecorder.utils.Identifiers.audioDuration;
+import static app.recorder.audiorecorder.utils.Identifiers.recordingAudioTime;
+import static app.recorder.audiorecorder.utils.Identifiers.samplingRate;
+import static app.recorder.audiorecorder.utils.Identifiers.setPreferencesApplications;
+
 public class AudioRecorderService extends Service implements MediaRecorder.OnInfoListener {
     MediaRecorder mediaRecorder;
     public static PowerManager.WakeLock wakeLock;
     private final IBinder mBinder = new LocalBinder();
+
 
     public AudioRecorderService() {}
 
@@ -37,6 +43,10 @@ public class AudioRecorderService extends Service implements MediaRecorder.OnInf
     @Override
     public void onCreate(){
         super.onCreate();
+        //INICIALIZAR LAS CONFIGURACIONES
+        setPreferencesApplications(getApplicationContext());
+
+        //MANTENER ENCENDIDO EL CPU DEL CELULAR
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakelockTag");
         wakeLock.acquire();
@@ -70,11 +80,12 @@ public class AudioRecorderService extends Service implements MediaRecorder.OnInf
 
     public void stopRecording(){
         mediaRecorder.stop();
-        Log.d("ATENCION", "GRABACION TERMINADA");
+        Log.d("ATTENTION", "RECORDING STOPPED");
         mediaRecorder.reset();
         mediaRecorder.release();
         mediaRecorder = null;
-        Log.d("ATENCION", "ESPERANDO PARA PROXIMA GRABACION..");
+        Log.d("ATTENTION", "WAITING "+String.valueOf(recordingAudioTime)+" SECONDS " +
+                "FOR NEXT RECORDING..");
     }
 
     public void startRecording() {
@@ -82,21 +93,18 @@ public class AudioRecorderService extends Service implements MediaRecorder.OnInf
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-        mediaRecorder.setAudioChannels(2);
-        mediaRecorder.setAudioEncodingBitRate(448000);
-        mediaRecorder.setAudioSamplingRate(44100);
-        mediaRecorder.setMaxDuration(90000);
+        mediaRecorder.setAudioSamplingRate(samplingRate*1000);
+        mediaRecorder.setMaxDuration(audioDuration*1000);
         mediaRecorder.setOnInfoListener(this);
         String sourceFile = mediaRecorderSetOutPutFile();
         try {
             mediaRecorder.prepare();
             mediaRecorder.start();
-            Log.d("ATENCION", "GRABANDO");
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
+            Log.d("ATTENTION","RECORDING "+ String.valueOf(audioDuration)+" SECONDS");
         } catch (IOException e) {
             e.printStackTrace();
         }
+        setPreferencesApplications(getApplicationContext());
     }
 
     public void onInfo(MediaRecorder mediaRecorder, int what, int extra) {

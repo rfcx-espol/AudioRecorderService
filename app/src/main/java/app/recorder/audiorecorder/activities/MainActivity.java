@@ -16,6 +16,8 @@ import app.recorder.audiorecorder.utils.FileUtils;
 
 import java.util.List;
 
+import static app.recorder.audiorecorder.utils.Identifiers.recordingAudioTime;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 1000,
                 150000 , pendingIntent);
+
         setContentView(app.recorder.audiorecorder.R.layout.activity_main);
     }
 

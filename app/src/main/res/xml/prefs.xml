@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditTextPreference
+    <!--EditTextPreference
         android:key="is_on_service"
         android:title="is_on_service"
         android:summary="string - true/false"
         android:enabled="true"
-        android:defaultValue="false" />
+        android:defaultValue="false" /-->
 
     <EditTextPreference
         android:key="recording_audio_interval"
@@ -21,18 +21,18 @@
         android:enabled="true"
         android:defaultValue="90" />
 
-    <EditTextPreference
+    <!--EditTextPreference
         android:key="audio_encode_bitrate"
         android:title="bit rate"
         android:summary="int - 24 kbps (mono) - 128 kbps or 192 kbps (stereo)"
         android:enabled="true"
-        android:defaultValue="448" />
+        android:defaultValue="448" /-->
 
     <EditTextPreference
         android:key="audio_sample_rate"
         android:title="sample rate"
         android:summary="int - from 8 to 48 khz"
         android:enabled="true"
-        android:defaultValue="44" />
+        android:defaultValue="48" />
 
 </PreferenceScreen>

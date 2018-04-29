@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import app.recorder.audiorecorder.activities.MainActivity;
+
 public class ReceiverCall extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
