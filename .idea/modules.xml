@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AudioRecorderService.iml" filepath="$PROJECT_DIR$/AudioRecorderService.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AudioRecorderService listo.iml" filepath="$PROJECT_DIR$/AudioRecorderService listo.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

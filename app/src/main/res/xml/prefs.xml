@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditTextPreference
+    <ListPreference
         android:key="file_format"
         android:title="Formato del archivo de audio"
-        android:summary="string - 3gp / m4a"
+        android:summary="string"
+        android:entries="@array/formats"
+        android:entryValues="@array/formats_value"
         android:enabled="true"
         android:defaultValue="m4a" />
 
@@ -12,34 +14,38 @@
         android:title="Duración del audio"
         android:summary="int - segundos"
         android:enabled="true"
-        android:defaultValue="30" />
+        android:defaultValue="90" />
 
     <EditTextPreference
         android:key="recording_audio_interval"
-        android:title="Intervalo entre el inicio de cada grabación"
-        android:summary="int - segundos (mayor que la duración del audio)"
+        android:title="Tiempo de espera para siguiente grabación"
+        android:summary="int - segundos"
         android:enabled="true"
-        android:defaultValue="60" />
+        android:defaultValue="210" />
 
-    <EditTextPreference
+    <ListPreference
         android:key="channels"
         android:title="Número de canales de audio"
-        android:summary="string - 1 (mono) / 2 (estereo)"
+        android:summary="1 (mono) / 2 (estereo)"
         android:enabled="true"
+        android:entries="@array/channels"
+        android:entryValues="@array/channels_values"
         android:defaultValue="2" />
 
     <EditTextPreference
         android:key="audio_encode_bitrate"
         android:title="Tasa de bits"
-        android:summary="int - 16 kbps a 1536 kbps"
+        android:summary="16 kbps a 256 kbps (mono) / 16 a 448 kbps(stereo)"
         android:enabled="true"
-        android:defaultValue="256" />
+        android:defaultValue="250" />
 
-    <EditTextPreference
+    <ListPreference
         android:key="audio_sample_rate"
         android:title="Número de muestras"
-        android:summary="int - 8000 Hz a 48000 Hz"
+        android:summary="int - Hz"
         android:enabled="true"
+        android:entries="@array/sampling_rate"
+        android:entryValues="@array/sampling_rate_values"
         android:defaultValue="48000" />
 
 </PreferenceScreen>

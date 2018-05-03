@@ -30,7 +30,9 @@
             android:name="app.recorder.audiorecorder.services.AudioRecorderService"
             android:enabled="true"
             android:exported="true" />
-        <receiver android:name="app.recorder.audiorecorder.services.ReceiverCall">
+        <receiver
+            android:name="app.recorder.audiorecorder.services.ReceiverCall"
+            android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>

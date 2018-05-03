@@ -3,4 +3,28 @@
     <string name="menu_prefs">Preferencias</string>
     <string name="menu_reboot">Reinicio</string>
     <string name="menu_screenshot">Capturas</string>
+    <string-array name="channels">Canales
+        <item name="mono">mono</item>
+        <item name="stereo">stereo</item>
+    </string-array>
+    <string-array name="channels_values">Canales
+        <item name="1">1</item>
+        <item name="2">2</item>
+    </string-array>
+    <string-array name="formats">Formato
+        <item name="3gp">3gp</item>
+        <item name="m4a">m4a</item>
+    </string-array>
+    <string-array name="formats_value">Formato
+        <item name="3gp">3gp</item>
+        <item name="m4a">m4a</item>
+    </string-array>
+    <string-array name="sampling_rate">SamplingRate
+        <item name="s3">48 kHz</item>
+        <item name="s4">44.1 kHz</item>
+    </string-array>
+    <string-array name="sampling_rate_values">SamplingRate
+        <item name="sv3">48000</item>
+        <item name="sv4">44100</item>
+    </string-array>
 </resources>

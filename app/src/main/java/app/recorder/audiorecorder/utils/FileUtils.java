@@ -56,4 +56,33 @@ public class FileUtils {
         return (new StringBuilder()).append(captureDir).append("/").append(captureTimeStamp).append(".").append(fileExtension).toString();
     }
 
+    //ELIMINA UN AUDIO
+    public static void deleteAudio(String audioPath){
+        File file = new File(audioPath);
+        if(file.exists()){
+            file.delete();
+            Log.d("DELETED", audioPath);
+        }
+    }
+
+    //VERIFICAR SI HAY ESPACIO EN LA MEMORIA EXTERNA
+    public static boolean getAvailableExternalMemorySize() {
+        if (externalMemoryAvailable()) {
+            File path = Environment.getExternalStorageDirectory();
+            StatFs stat = new StatFs(path.getPath());
+            long blockSize = stat.getBlockSize();
+            long availableBlocks = stat.getAvailableBlocks();
+            long size = availableBlocks * blockSize;
+            Log.i("Utils", "Available size in bytes: " + size);
+            return size >= 30000000;
+        }
+        return false;
+    }
+
+    //RETORNAR LA MEMORIA EXTERNA
+    private static boolean externalMemoryAvailable() {
+        return android.os.Environment.getExternalStorageState().equals(
+                android.os.Environment.MEDIA_MOUNTED);
+    }
+
 }
