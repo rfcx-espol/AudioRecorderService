@@ -42,7 +42,7 @@
     <ListPreference
         android:key="audio_sample_rate"
         android:title="Número de muestras"
-        android:summary="int - Hz"
+        android:summary="int - kHz"
         android:enabled="true"
         android:entries="@array/sampling_rate"
         android:entryValues="@array/sampling_rate_values"
