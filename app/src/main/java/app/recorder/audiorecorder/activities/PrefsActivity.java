@@ -25,6 +25,7 @@ public class PrefsActivity extends PreferenceActivity implements SharedPreferenc
         addPreferencesFromResource(R.xml.prefs);
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -34,9 +35,7 @@ public class PrefsActivity extends PreferenceActivity implements SharedPreferenc
                 PreferenceGroup preferenceGroup = (PreferenceGroup) preference;
                 for (int j = 0; j < preferenceGroup.getPreferenceCount(); ++j) {
                     Preference singlePref = preferenceGroup.getPreference(j);
-                    Log.d("pref", String.valueOf(singlePref));
                     updatePreference(singlePref, singlePref.getKey());
-
                 }
             } else {
                 updatePreference(preference, preference.getKey());
@@ -57,6 +56,7 @@ public class PrefsActivity extends PreferenceActivity implements SharedPreferenc
             Log.d("ALARMA", "ALARMA CAMBIADA");
         }
     }
+
     private void updatePreference(Preference preference, String key) {
         if (preference == null) return;
         if (preference instanceof ListPreference) {
@@ -67,17 +67,14 @@ public class PrefsActivity extends PreferenceActivity implements SharedPreferenc
         SharedPreferences sharedPrefs = getPreferenceManager().getSharedPreferences();
         if(key.equals("recording_audio_interval")){
             preference.setSummary(sharedPrefs.getString(key, "Default")+" Segundos");
-        }else if(key.equals("audio_duration")){
+        } else if(key.equals("audio_duration")){
             preference.setSummary(sharedPrefs.getString(key, "Default")+ " Segundos");
-        }else if(key.equals("audio_encode_bitrate")){
+        } else if(key.equals("audio_encode_bitrate")){
             preference.setSummary(sharedPrefs.getString(key, "Default")+" Kbps \n" +
                     "Nota: 16 kbps a 256 kbps (mono) / 16 a 448 kbps (stereo)");
-        }
-        else{
+        } else {
             preference.setSummary(sharedPrefs.getString(key, "Default"));
         }
-
-
     }
 
 }

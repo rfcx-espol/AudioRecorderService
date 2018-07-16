@@ -7,11 +7,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
 import java.util.List;
 import app.recorder.audiorecorder.R;
 import app.recorder.audiorecorder.services.AudioRecorderService;
@@ -35,18 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         //INICIAR EL SERVICIO
         if(!onService) {
-            PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
-            setPreferencesApplications(getApplicationContext());
-
-            pendingIntent = PendingIntent.getService(getApplicationContext(), 0,
-                    new Intent(this, AudioRecorderService.class), PendingIntent.FLAG_UPDATE_CURRENT);
-            alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            if (alarmManager != null) {
-                alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 1000,
-                        recordingAudioInterval + audioDuration , pendingIntent);
-                Log.d("ALARMA", "ALARMA CREADA");
-            }
-            onService = true;
+            createAlarm();
         }
         setContentView(app.recorder.audiorecorder.R.layout.activity_main);
     }
@@ -74,27 +66,36 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    //REINICIAR LA APP MIENTRAS NO ESTÉ GRABANDO
-    public void reboot(){
-        Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage( getBaseContext().getPackageName() );
-        boolean executingService= isExecuting();
-        Log.d("EJECUTANDO",String.valueOf(executingService));
-        if (i != null && !executingService) {
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(i);
+    private void createAlarm() {
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+        setPreferencesApplications(getApplicationContext());
+
+        pendingIntent = PendingIntent.getService(getApplicationContext(), 0,
+                new Intent(this, AudioRecorderService.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager != null) {
+            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 1000,
+                    recordingAudioInterval + audioDuration , pendingIntent);
+            Log.d("ALARMA", "ALARMA CREADA");
         }
+        onService = true;
     }
 
-    //VERIFICAR LA EJECUCIÓN DEL SERVICIO
-    private boolean isExecuting() {
-        ActivityManager activityManager = (ActivityManager) this.getSystemService( ACTIVITY_SERVICE );
-        List<ActivityManager.RunningAppProcessInfo> procInfos = activityManager.getRunningAppProcesses();
-        for(int i = 0; i < procInfos.size(); i++) {
-            if(procInfos.get(i).processName.equals("app.recorder.audiorecorderservice")) {
-                return true; //EL SERVICIO ESTÁ ACTIVO
+    //REINICIAR EL SERVICIO
+    public void reboot(){
+        Intent intentAudioRecord = new Intent(this, AudioRecorderService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0,
+                new Intent(this, AudioRecorderService.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (AudioRecorderService.class.getName().equals(service.service.getClassName())) {
+                alarmManager.cancel(pendingIntent);
+                stopService(intentAudioRecord);
+                break;
             }
         }
-        return false; //EL SERVICIO ESTÁ INACTIVO
+        createAlarm();
+        Toast.makeText(this, "SERVICIO REINICIADO", Toast.LENGTH_SHORT).show();
     }
 
 }

@@ -73,8 +73,7 @@ public class AudioRecorderService extends Service implements MediaRecorder.OnInf
     //CREAR EL ARCHIVO DE SALIDA DEL AUDIO
     public void mediaRecorderSetOutPutFile(){
         long captureTimeStamp = System.currentTimeMillis();
-        String captureDir = FileUtils.createAudiosFilesDir(captureTimeStamp);
-        audioPath = FileUtils.getCaptureFilePath(captureDir,captureTimeStamp,format);
+        audioPath = FileUtils.getCaptureFilePath(captureTimeStamp,format);
         mediaRecorder.setOutputFile(audioPath);
     }
 
