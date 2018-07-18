@@ -21,7 +21,7 @@
         android:title="Tiempo de espera para siguiente grabación"
         android:summary="int - segundos"
         android:enabled="true"
-        android:defaultValue="210" />
+        android:defaultValue="330" />
 
     <ListPreference
         android:key="channels"
