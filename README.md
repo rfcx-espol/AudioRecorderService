@@ -1,15 +1,38 @@
-# AudioRecorderService
+#AUDIO RECORDER SERVICE
+It is a service that allows audio recording in the background.
+![Diagrama de interacción de clases](https://github.com/rfcx-espol/AudioRecorderService/blob/master/diagrama.jpg?raw=true)
+##Features
+It has a menu that allows you to configure the following audio options:
+- Audio format: m4a or 3gp.
+- Audio duration: Recording time of an audio.
+- Waiting time for next recording: How often you should record
+- Number of audio channels: mono or stereo.
+- Bitrate: From 16 kbps to 448 kbps. If you are recording in mono, you can only configure to 256 kbps.
+- Number of samples: 48 khz, 44.1 khz or 16khz.
+##System requirements
+- Minimum Android API: 10 
+- Android version: 2.3.5
+##Directories
+- java directory:
 
-Es un servicio que permite la grabación de audio en segundo plano. Para ello se utilizaron dos librerías de Java: 
-- MediaRecorder: Para grabar audios y codificarlos.
-- AlarmManager: Permite que el servicio se ejecute cada cierto tiempo.
+  - Activities: <br/>
+    **- MainActivity:** Starts the service for the first time. <br/>
+    **- PrefsActivity:** Starts the audio preferences menu. Changes made by the user. <br/>
+  - Services: <br/>
+    **- ReceiverCall:** Starts the service after the device's restart. <br/>
+  - Services: <br/>
+    **- AudioRecorderService:** Start recording everything that is close to the device. <br/>
+  - Utils: <br/>
+    **- FileUtils:** Find or create the directory file when audio will be saved. <br/>
+    **- Identifiers:** Contains the global variables and static variables. <br/>
+- res directory (layouts):
 
-Además cuenta con un menú que permite configurar varias características de audio. Contiene las siguientes opciones:
-- Formato del archivo de audio: Puede ser grabado en m4a o 3gp.
-- Duración del audio: Tiempo de grabación de un audio.
-- Tiempo de espera para siguiente grabación: Representa cada cuanto tiempo debe grabar.
-- Número de canales de audio: Tiene 2 opciones, mono o stereo. 
-- Tasa de bits (Bitrate): Se encuentra en Kbps. Puede ser de 16 kbps hasta 448 kbps. Si se está grabando en mono solo se puede hasta 256 kbps.
-- Número de muestras: Se encuentra en Khz. Puede ser 48 kHz, 44.1 kHz o 16 kHz. 
-
-El servicio puede ser ejecutado en celulares con versiones de Android mayores o iguales a 2.3.3 (API level >= 10). 
+  - layout: <br/>
+    **- activity_main:** Blank layout to start the app. <br/>
+  - menu: <br/>
+    **- main_menu:** Contains the audio's preferences options. <br/>
+  - xml: <br/>
+    **- prefs:** Allows to see and modify the preferences. <br/><br/>
+##Libraries
+- MediaRecorder: Record audios and allows you to configure it 
+- AlarmManager: Activate the service every so often
