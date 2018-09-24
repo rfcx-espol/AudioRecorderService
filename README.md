@@ -1,7 +1,8 @@
-#AUDIO RECORDER SERVICE
-It is a service that allows audio recording in the background.
+# AUDIO RECORDER SERVICE
+It is a service that allows audio recording in the background.<br/>
 ![Diagrama de interacción de clases](https://github.com/rfcx-espol/AudioRecorderService/blob/master/diagrama.jpg?raw=true)
-##Features
+
+## Features
 It has a menu that allows you to configure the following audio options:
 - Audio format: m4a or 3gp.
 - Audio duration: Recording time of an audio.
@@ -9,10 +10,12 @@ It has a menu that allows you to configure the following audio options:
 - Number of audio channels: mono or stereo.
 - Bitrate: From 16 kbps to 448 kbps. If you are recording in mono, you can only configure to 256 kbps.
 - Number of samples: 48 khz, 44.1 khz or 16khz.
-##System requirements
-- Minimum Android API: 10 
+
+## System requirements
+- Minimum Android API: 10 <br/>
 - Android version: 2.3.5
-##Directories
+
+## Directories
 - java directory:
 
   - Activities: <br/>
@@ -33,6 +36,7 @@ It has a menu that allows you to configure the following audio options:
     **- main_menu:** Contains the audio's preferences options. <br/>
   - xml: <br/>
     **- prefs:** Allows to see and modify the preferences. <br/><br/>
-##Libraries
-- MediaRecorder: Record audios and allows you to configure it 
+
+## Libraries
+- MediaRecorder: Record audios and allows you to configure it <br/>
 - AlarmManager: Activate the service every so often
