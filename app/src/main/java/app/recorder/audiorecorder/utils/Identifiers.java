@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 public class Identifiers {
@@ -27,6 +30,8 @@ public class Identifiers {
     public static PendingIntent pendingIntent;
     //ALARMA EN EJECUCIÓN
     public static AlarmManager alarmManager;
+    //ARCHIVO LOG EN LA MEMORIA EXTERNA
+    public static File log;
 
     //ESTABLECE LAS PREFERENCIAS DEL SERVICIO
     public static void setPreferencesApplications(Context context){
@@ -39,7 +44,7 @@ public class Identifiers {
         format = prefSettings.getString("file_format","m4a");
 
         for ( Map.Entry<String,?> pref : prefSettings.getAll().entrySet() ) {
-            Log.d("CONFIGURACIÓN ACTUAL" , pref.getKey() + ": " + pref.getValue().toString());
+            Log.i("CONFIGURACIÓN ACTUAL" , pref.getKey() + ": " + pref.getValue().toString());
         }
     }
 }

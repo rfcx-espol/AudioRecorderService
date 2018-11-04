@@ -4,8 +4,11 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.Date;
 
 public class FileUtils {
 
@@ -19,7 +22,8 @@ public class FileUtils {
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), "audios");
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
-                Log.d("App", "failed to create directory");
+                Log.e("ERROR", "NO SE PUDO CREAR EL DIRECTORIO DE AUDIOS");
+                FileUtils.escribirEnLog("ERROR - NO SE PUDO CREAR EL DIRECTORIO DE AUDIOS");
             }
         }
     }
@@ -34,7 +38,8 @@ public class FileUtils {
         File file = new File(audioPath);
         if(file.exists()){
             file.delete();
-            Log.d("DELETED", audioPath);
+            Log.i("INFO", "ARCHIVO INCOMPLETO BORRADO DESPUES DE REINICIAR");
+            FileUtils.escribirEnLog("INFO - ARCHIVO INCOMPLETO BORRADO DESPUES DE REINICIAR EL DISPOSITIVO");
         }
     }
 
@@ -46,16 +51,46 @@ public class FileUtils {
             long blockSize = stat.getBlockSize();
             long availableBlocks = stat.getAvailableBlocks();
             long size = availableBlocks * blockSize;
-            Log.i("Utils", "Available size in bytes: " + size);
             return size >= 30000000;
         }
         return false;
     }
 
     //RETORNAR LA MEMORIA EXTERNA
-    private static boolean externalMemoryAvailable() {
+    public static boolean externalMemoryAvailable() {
         return android.os.Environment.getExternalStorageState().equals(
                 android.os.Environment.MEDIA_MOUNTED);
+    }
+
+    //VERIFICA SI SE PUEDE ESCRIBIR EN LA MEMORIA EXTERNA
+    public static boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED.equals(state);
+    }
+
+    public static void escribirEnLog(String mensaje) {
+        FileOutputStream fos;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS");
+        String fecha = sdf.format(new Date());
+        String cadena = fecha + ": " + mensaje + "\n";
+        try {
+            fos = new FileOutputStream(Identifiers.log.getPath(), true);
+            if(fos.getChannel().position() > 1000000) {
+                fos.close();
+                fos = new FileOutputStream(Identifiers.log.getPath(), false);
+                fos.close();
+                fos = new FileOutputStream(Identifiers.log.getPath(), true);
+                fos.write(cadena.getBytes());
+                fos.close();
+            } else {
+                fos.write(cadena.getBytes());
+                fos.close();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

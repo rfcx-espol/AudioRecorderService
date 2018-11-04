@@ -1,5 +1,6 @@
 package app.recorder.audiorecorder.services;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaRecorder;
@@ -41,6 +42,7 @@ public class AudioRecorderService extends Service implements MediaRecorder.OnInf
     }
 
     //CREAR EL SERVICIO DE GRABACIÓN DE AUDIOS
+    @SuppressLint("InvalidWakeLockTag")
     @Override
     public void onCreate(){
         super.onCreate();
@@ -80,9 +82,10 @@ public class AudioRecorderService extends Service implements MediaRecorder.OnInf
     //DETENER LA GRABACIÓN Y ACTUALIZAR LAS PREFERENCIAS
     public void stopRecording(){
         mediaRecorder.stop();
-        Log.d("GRABACIÓN", "LA GRABACIÓN TERMINÓ");
-        Log.d("GRABACIÓN", "ESPERANDO " + String.valueOf(recordingAudioInterval / 1000) +
-                " SEGUNDOS PARA LA PRÓXIMA GRABACIÓN");
+        Log.i("INFO", "LA GRABACIÓN TERMINÓ");
+        FileUtils.escribirEnLog("INFO - LA GRABACIÓN FINALIZÓ EXITOSAMENTE");
+        Log.i("INFO", "LA PRÓXIMA GRABACIÓN INICIARÁ EN " +
+                String.valueOf(recordingAudioInterval / 1000) + " SEGUNDOS");
         mediaRecorder.reset();
         mediaRecorder.release();
         mediaRecorder = null;
@@ -92,7 +95,6 @@ public class AudioRecorderService extends Service implements MediaRecorder.OnInf
     //INICIAR LA GRABACIÓN DE AUDIOS SI HAY ESPACIO DISPONIBLE
     public void startRecording() {
         if(FileUtils.getAvailableExternalMemorySize()){
-            Log.d("GRABAR", "SI HAY ESPACIO PARA GRABAR");
             mediaRecorder = new MediaRecorder();
             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             if(format.equals("m4a")) {
@@ -110,14 +112,18 @@ public class AudioRecorderService extends Service implements MediaRecorder.OnInf
             try {
                 mediaRecorder.prepare();
                 mediaRecorder.start();
-                Log.d("GRABACIÓN","GRABANDO DURANTE "+ String.valueOf(audioDuration / 1000) + " SEGUNDOS");
+                Log.i("INFO","GRABANDO DURANTE "+ String.valueOf(audioDuration / 1000) + " SEGUNDOS");
+                FileUtils.escribirEnLog("INFO - INICIO DE LA GRABACIÓN");
             } catch (IllegalStateException e) {
+                FileUtils.escribirEnLog("ERROR - " + e.getMessage());
                 e.printStackTrace();
             } catch (IOException e) {
+                FileUtils.escribirEnLog("ERROR - " + e.getMessage());
                 e.printStackTrace();
             }
         } else {
-            Log.d("GRABAR", "NO HAY ESPACIO PARA GRABAR");
+            Log.e("ERROR", "NO HAY SUFICIENTE ESPACIO EN LA MEMORIA PARA GRABAR");
+            FileUtils.escribirEnLog("ERROR - NO HAY SUFICIENTE ESPACIO EN LA MEMORIA PARA GRABAR");
         }
     }
 

@@ -5,20 +5,20 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
-import java.util.List;
+import java.io.File;
 import app.recorder.audiorecorder.R;
 import app.recorder.audiorecorder.services.AudioRecorderService;
 import app.recorder.audiorecorder.utils.FileUtils;
+import app.recorder.audiorecorder.utils.Identifiers;
 import static app.recorder.audiorecorder.utils.Identifiers.alarmManager;
 import static app.recorder.audiorecorder.utils.Identifiers.onService;
 import static app.recorder.audiorecorder.utils.Identifiers.pendingIntent;
@@ -35,6 +35,14 @@ public class MainActivity extends AppCompatActivity {
 
         //CREAR LA CARPETAS AUDIOS
         FileUtils.createPrincipalFolder();
+
+        //CREACIÓN DEL ARCHIVO LOG
+        if(FileUtils.externalMemoryAvailable() && FileUtils.isExternalStorageWritable() &&
+                FileUtils.getAvailableExternalMemorySize()) {
+            Identifiers.log = new File(Environment.getExternalStorageDirectory(), "Log - AudioRecorder.txt");
+            Log.i("INFO", "ARCHIVO LOG CREADO EN: " + Identifiers.log.getPath());
+            FileUtils.escribirEnLog("INFO - APLICACIÓN INICIADA");
+        }
 
         //INICIAR EL SERVICIO
         if(!onService) {
@@ -66,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    //CREACIÓN DE LA ALARMA
     private void createAlarm() {
         PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
         setPreferencesApplications(getApplicationContext());
@@ -76,7 +85,8 @@ public class MainActivity extends AppCompatActivity {
         if (alarmManager != null) {
             alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 1000,
                     recordingAudioInterval + audioDuration , pendingIntent);
-            Log.d("ALARMA", "ALARMA CREADA");
+            Log.i("INFO", "ALARMA CREADA");
+            FileUtils.escribirEnLog("INFO - ALARMA CREADA");
         }
         onService = true;
     }
@@ -96,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
         }
         createAlarm();
         Toast.makeText(this, "SERVICIO REINICIADO", Toast.LENGTH_SHORT).show();
+        Log.i("INFO", "SERVICIO REINICIADO");
+        FileUtils.escribirEnLog("INFO - SERVICIO REINICIADO");
     }
 
 }

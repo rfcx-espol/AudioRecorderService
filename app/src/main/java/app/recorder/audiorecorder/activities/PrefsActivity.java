@@ -10,8 +10,13 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.util.Log;
+
+import java.io.File;
+
 import app.recorder.audiorecorder.R;
 import app.recorder.audiorecorder.services.AudioRecorderService;
+import app.recorder.audiorecorder.utils.FileUtils;
+
 import static app.recorder.audiorecorder.utils.Identifiers.setPreferencesApplications;
 import static app.recorder.audiorecorder.utils.Identifiers.alarmManager;
 import static app.recorder.audiorecorder.utils.Identifiers.pendingIntent;
@@ -29,7 +34,7 @@ public class PrefsActivity extends PreferenceActivity implements SharedPreferenc
     @Override
     public void onResume() {
         super.onResume();
-        for (int i = 0; i < getPreferenceScreen().getPreferenceCount(); ++i) {
+        /*for (int i = 0; i < getPreferenceScreen().getPreferenceCount(); ++i) {
             Preference preference = getPreferenceScreen().getPreference(i);
             if (preference instanceof PreferenceGroup) {
                 PreferenceGroup preferenceGroup = (PreferenceGroup) preference;
@@ -40,20 +45,17 @@ public class PrefsActivity extends PreferenceActivity implements SharedPreferenc
             } else {
                 updatePreference(preference, preference.getKey());
             }
-        }
+        }*/
     }
 
     //LISTENER QUE DETECTA CAMBIOS EN LAS PREFERENCIAS
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         updatePreference(findPreference(key), key);
-        Log.d("METODO CHANGE", "CAMBIÓ LA CONFIGURACIÓN: " + key);
         if (key.equals("audio_duration") || key.equals("recording_audio_interval")) {
-            Log.d("METODO CHANGE", "ENTRÓ");
             stopService(new Intent(this, AudioRecorderService.class));
             setPreferencesApplications(getApplicationContext());
             alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 1000,
                     recordingAudioInterval + audioDuration , pendingIntent);
-            Log.d("ALARMA", "ALARMA CAMBIADA");
         }
     }
 
@@ -65,15 +67,21 @@ public class PrefsActivity extends PreferenceActivity implements SharedPreferenc
             return;
         }
         SharedPreferences sharedPrefs = getPreferenceManager().getSharedPreferences();
-        if(key.equals("recording_audio_interval")){
-            preference.setSummary(sharedPrefs.getString(key, "Default")+" Segundos");
-        } else if(key.equals("audio_duration")){
-            preference.setSummary(sharedPrefs.getString(key, "Default")+ " Segundos");
-        } else if(key.equals("audio_encode_bitrate")){
-            preference.setSummary(sharedPrefs.getString(key, "Default")+" Kbps \n" +
-                    "Nota: 16 kbps a 256 kbps (mono) / 16 a 448 kbps (stereo)");
-        } else {
-            preference.setSummary(sharedPrefs.getString(key, "Default"));
+
+        switch (key) {
+            case "recording_audio_interval":
+                preference.setSummary(sharedPrefs.getString(key, "Default") + " Segundos");
+                break;
+            case "audio_duration":
+                preference.setSummary(sharedPrefs.getString(key, "Default") + " Segundos");
+                break;
+            case "audio_encode_bitrate":
+                preference.setSummary(sharedPrefs.getString(key, "Default") + " Kbps \n" +
+                        "Nota: 16 kbps a 256 kbps (mono) / 16 a 448 kbps (stereo)");
+                break;
+            default:
+                preference.setSummary(sharedPrefs.getString(key, "Default"));
+                break;
         }
     }
 

@@ -12,6 +12,8 @@ import android.util.Log;
 import java.io.File;
 import java.util.Arrays;
 
+import app.recorder.audiorecorder.utils.FileUtils;
+
 import static app.recorder.audiorecorder.utils.FileUtils.deleteAudio;
 import static app.recorder.audiorecorder.utils.Identifiers.alarmManager;
 import static app.recorder.audiorecorder.utils.Identifiers.audioDuration;
@@ -24,8 +26,6 @@ public class ReceiverCall extends BroadcastReceiver {
     //REINICIAR EL SERVICIO AL REINICIAR EL DISPOSITIVO
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.i("SERVICIO", "REINICIANDO EL SERVICIO");
-
         //INICIAR EL SERVICIO
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
             if (!onService) {
@@ -35,9 +35,11 @@ public class ReceiverCall extends BroadcastReceiver {
                         new Intent(context, AudioRecorderService.class), PendingIntent.FLAG_UPDATE_CURRENT);
                 alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
                 if (alarmManager != null) {
-                    alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 1000,
+                    alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                            SystemClock.elapsedRealtime() + 1000,
                             recordingAudioInterval + audioDuration, pendingIntent);
-                    Log.d("ALARMA", "ALARMA CREADA DESPUÉS DE REINICIAR EL DISPOSITIVO");
+                    FileUtils.escribirEnLog("INFO - SERVICIO REINICIADO DESPUÉS DE REINICIAR EL DISPOSITIVO");
+                    Log.i("INFO", "SERVICIO REINICIADO DESPUÉS DE REINICIAR EL DISPOSITIVO");
                 }
                 onService = true;
             }
@@ -48,7 +50,6 @@ public class ReceiverCall extends BroadcastReceiver {
     public void eraseLastFile() {
         File[] files = new File(Environment.getExternalStorageDirectory().getPath()+ "/audios/").listFiles();
         Arrays.sort(files);
-        Log.d("BORRAR", "ARCHIVO INCOMPLETO BORRADO DESPUES DE REINICIAR");
         deleteAudio(files[files.length - 1].getAbsolutePath());
     }
 
