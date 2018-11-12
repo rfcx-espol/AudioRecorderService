@@ -38,8 +38,8 @@ public class FileUtils {
         File file = new File(audioPath);
         if(file.exists()){
             file.delete();
-            Log.i("INFO", "ARCHIVO INCOMPLETO BORRADO DESPUES DE REINICIAR");
-            FileUtils.escribirEnLog("INFO - ARCHIVO INCOMPLETO BORRADO DESPUES DE REINICIAR EL DISPOSITIVO");
+            Log.i("INFO", "ARCHIVO INCOMPLETO BORRADO DESPUES DE REINICIAR: " + audioPath);
+            FileUtils.escribirEnLog("INFO - ARCHIVO INCOMPLETO BORRADO DESPUES DE REINICIAR EL DISPOSITIVO: " + audioPath);
         }
     }
 
@@ -87,10 +87,26 @@ public class FileUtils {
                 fos.close();
             }
         } catch (FileNotFoundException e) {
+            Log.e("ERROR", "EL ARCHIVO LOG NO EXISTE");
+            if(FileUtils.crearLog())
+                Log.e("ERROR", "NO SE PUDO CREAR EL ARCHIVO LOG");
+            else
+                Log.i("INFO", "ARCHIVO LOG CREADO EXITOSAMENTE");
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static boolean crearLog(){
+        if(FileUtils.externalMemoryAvailable() && FileUtils.isExternalStorageWritable() &&
+                FileUtils.getAvailableExternalMemorySize()) {
+            Identifiers.log = new File(Environment.getExternalStorageDirectory(), "Log - AudioRecorder.txt");
+            Log.i("INFO", "ARCHIVO LOG CREADO EN: " + Identifiers.log.getPath());
+            FileUtils.escribirEnLog("INFO - APLICACIÓN INICIADA");
+            return false;
+        }
+        return true;
     }
 
 }

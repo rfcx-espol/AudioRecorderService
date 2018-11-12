@@ -113,7 +113,7 @@ public class AudioRecorderService extends Service implements MediaRecorder.OnInf
                 mediaRecorder.prepare();
                 mediaRecorder.start();
                 Log.i("INFO","GRABANDO DURANTE "+ String.valueOf(audioDuration / 1000) + " SEGUNDOS");
-                FileUtils.escribirEnLog("INFO - INICIO DE LA GRABACIÓN");
+                FileUtils.escribirEnLog("INFO - INICIO DE LA GRABACIÓN EN ARCHIVO: " + audioPath);
             } catch (IllegalStateException e) {
                 FileUtils.escribirEnLog("ERROR - " + e.getMessage());
                 e.printStackTrace();

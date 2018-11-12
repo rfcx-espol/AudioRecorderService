@@ -13,6 +13,7 @@ import java.io.File;
 import java.util.Arrays;
 
 import app.recorder.audiorecorder.utils.FileUtils;
+import app.recorder.audiorecorder.utils.Identifiers;
 
 import static app.recorder.audiorecorder.utils.FileUtils.deleteAudio;
 import static app.recorder.audiorecorder.utils.Identifiers.alarmManager;
@@ -28,6 +29,7 @@ public class ReceiverCall extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         //INICIAR EL SERVICIO
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+            Identifiers.log = new File(Environment.getExternalStorageDirectory(), "Log - AudioRecorder.txt");
             if (!onService) {
                 eraseLastFile();
                 setPreferencesApplications(context);
