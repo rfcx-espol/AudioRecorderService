@@ -22,9 +22,9 @@ It has a menu that allows you to configure the following audio options:
     **- MainActivity:** Starts the service for the first time. <br/>
     **- PrefsActivity:** Starts the audio preferences menu. Changes made by the user. <br/>
   - Services: <br/>
-    **- ReceiverCall:** Starts the service after the device's restart. <br/>
-  - Services: <br/>
     **- AudioRecorderService:** Start recording everything that is close to the device. <br/>
+    **- ReceiverCall:** Starts the service after the device's restart. <br/>
+    **- BatteryLevelReceiver:** Detects when the battery's level is too low or it's restored to an acceptable level after being low. <br/>
   - Utils: <br/>
     **- FileUtils:** Find or create the directory file when audio will be saved. <br/>
     **- Identifiers:** Contains the global variables and static variables. <br/>
